@@ -1,0 +1,290 @@
+<body>
+
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+
+<script>
+console.log(d3); // test if d3 is loaded
+
+// Add an SVG
+// window dimensions
+var svgHeight = 600;
+var svgWidth = 500;
+//parameters for placement of elements
+var lineBuffer = 75;
+var padding = 50;
+var lowerMargin = 200
+var maxSize =100 //maximum dimension of an edge of shape
+
+d3.select('body').append('svg')
+	.attr('width', svgWidth)
+	.attr('height',svgHeight)
+
+// return random integer between 0 and specified value
+function randRange(r) {
+	return Math.round(Math.random()*r)
+}
+
+//select random color from RGB color space
+function randRGBColor(){
+	var r = randRange(255)
+	var g = randRange(255)
+	var b = randRange(255)
+	return 'rgb('+r+','+g+','+b+')'
+}
+//from colorbrewer2.com
+//Seven  color categorical color palette 
+var colorArray0 = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494','#b3b3b3']
+// Seven color sequential - reds
+var colorArray1 = ['#fef0d9','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#990000']
+// Seven color sequential - blue-green
+var colorArray2 = ['#f6eff7','#d0d1e6','#a6bddb','#67a9cf','#3690c0','#02818a','#016450']
+// Seven color sequential - purple-magenta
+var colorArray3 = ['#feebe2','#fcc5c0','#fa9fb5','#f768a1','#dd3497','#ae017e','#7a0177']
+var colorArray4 = ['red','black','white','grey']
+var colorArray = [ colorArray0, colorArray1, colorArray2, colorArray3, colorArray4]
+
+ 	
+
+//function to randomly select color from coloorArray
+function randColor(c=0){
+	var numColors = colorArray.length
+	return colorArray[c][randRange(numColors)]
+}
+ function nextColor(k){
+ 	return colorArray[4][k]
+ }
+
+//select random x and y coordinates and shape dimension 
+function randX(){
+	return randRange(svgWidth-padding*2)+padding
+}
+function randY(){
+	return randRange(svgHeight-lowerMargin-padding*2)+padding
+}
+function randSize(){
+	return randRange(maxSize)
+}
+
+//data arrays 
+//
+var A = [1,2,4,8,16,32,64]
+var B = [64,32,16,8,4,2,1]
+var C = [0,2,0,1,2,3,4,1,2,3,4,0,1,2,3,4,1,1,2,3,4,2,0,1,2,3,4,3]
+
+var vis = d3.select('body').select('svg')
+
+
+
+
+
+
+  // Add Rectangles
+vis.selectAll('rect')
+	.data(C)
+	.enter().append('rect')
+	.attr('x', function(d,i){
+		return randX()
+	})
+	.attr('y', function(d,i){
+	 	return randY()
+	})
+	.attr('width', function(d,i){
+		return randSize()
+	})
+	.attr('height', function(d,i){
+		return randSize()
+	})
+	.attr('fill', function(d,i){
+		return randColor(1)
+	})
+
+vis.selectAll('rect')
+ .on('mouseover', function(d) {
+   d3.select(this)
+     .transition()
+     .duration(500)
+     .style('fill', randColor());
+ })
+ .on('mouseout', function(d) {
+   d3.select(this)
+     .transition()
+     .duration(500)
+     .attr('width', function(d) {
+     	return randSize()
+     })
+     .attr('height', function(d) {
+     	return randSize()
+     });
+ })
+.on('click', function(d) {
+   d3.selectAll('rect')
+     .transition()
+     .duration(750)
+     .attr('x', function(d) {
+     	return randX()
+     })
+     .attr('y', function(d) {
+     	return randY()
+     });
+ })
+
+
+  // Add Circles
+
+vis.selectAll('circle')
+	.data(C)
+	.enter().append('circle')
+	.attr('cx', function(d,i){
+		return randX()
+	})
+	.attr('cy', function(d,i){
+		return randY()
+	})
+	.attr('r', function(d,i){
+		return randSize()/2
+	})
+	.attr('fill', function(d,i){
+		return randColor(2)
+	})
+
+vis.selectAll('circle')
+ .on('mouseover', function(d) {
+   d3.select(this)
+     .transition()
+     .duration(500)
+     .style('fill', randColor());
+ })
+ .on('mouseout', function(d) {
+   d3.select(this)
+     .transition()
+     .duration(500)
+     .attr('r', function(d) {
+     	return randSize()
+     });
+ }).on('click', function(d) {
+   d3.select(this)
+     .transition()
+     .duration(750)
+     .attr('cx', function(d) {
+     	return randX()
+     })
+     .attr('cy', function(d) {
+     	return randY()
+     });
+ })
+
+  // Add Lines
+
+vis.selectAll('line')
+	.data(A)
+	.enter().append('line')
+	.attr('x1', function(d,i){
+		return svgWidth/2
+	})
+	.attr('y1', function(d,i){
+		return svgHeight/2
+	})
+	.attr('x2', function(d,i){
+		return randX()
+	})
+	.attr('y2', function(d,i){
+		return randY()
+	})
+	.attr('stroke',function(d,i){
+		return randColor(2)
+	})
+	.attr('stroke-width','10')
+	
+
+vis.selectAll('line')
+ .on('mouseover', function(d) {
+   d3.select(this)
+     .transition()
+     .duration(500)
+     .style('stroke', randColor());
+ })
+ .on('click', function(d) {
+   		d3.select(this)
+     		.transition()
+     		.duration(750)
+     		.attr('x1', function(d) {
+     			return svgWidth/2
+     		})
+     		.attr('y1', function(d) {
+     			return svgHeight/2
+     		})
+     		.attr('x2', function(d) {   			
+     			return  randX()
+     		})
+     		.attr('y2', function(d) {
+     			return randY()
+     		});
+ })
+  // Add Polygons
+
+var stringXY = '';
+var radius =63;
+var x0=325;
+var y0=400;
+var x =0;
+var y=0
+var phi=Math.PI/2;
+//calculate coordinates for rounded portion of P
+while (phi > -Math.PI/2){
+	x = x0+radius*Math.cos(phi)
+	y = y0+radius*Math.sin(phi)+radius 
+	stringXY = stringXY+ ' '+x+','+y
+	phi = phi - Math.PI/25
+};
+	
+
+
+var P = "275,400 325,400" + stringXY +" 325,450 325,600 275,600";
+var I = "425,400 475,400 475,600 425,600";
+
+var W0 = "148,600 75,600 50,400 100,400 121,550 ";
+var W1 = "137,400 172,400 184,550 205,400 255,400 ";
+var W2 = "230,600 160,600 ";
+var W3 = "154,525";
+var W = W0 +W1+W2+W3;
+var polyArray =[W,P,I];
+
+
+vis.selectAll('polygon')
+	.data(polyArray)
+	.enter().append('polygon')
+	.attr('points', function(d,i){
+		return polyArray[i]
+	})
+	.attr('fill', function(d,i){
+		return 'red' //randColor(3)
+	});
+
+vis.selectAll('polygon')
+ .on('mouseover', function(d) {
+   d3.selectAll('polygon')
+     .transition()
+     .duration(2000)
+     .style('fill', nextColor(2));
+ });
+vis.selectAll('polygon')
+ .on('mouseout', function(d) {
+   d3.selectAll('polygon')
+     .transition()
+     .duration(1000)
+     .style('fill', nextColor(0));
+ });
+vis.selectAll('polygon')
+ .on('click', function(d) {
+   d3.selectAll('polygon')
+     .transition()
+     .duration(1000)
+     .style('fill', nextColor(1));
+ });
+
+
+
+</script>
+</body>
